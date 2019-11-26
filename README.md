@@ -1,6 +1,6 @@
 # Classifying US Kickstarter Projects
 
-Downloading the dataset(s): 
+Downloading the data: 
 
 ````
 # Original dataset
