@@ -1,1 +1,1 @@
-# Classifying-Kickstarter-Projects
+# Classifying US Kickstarter Projects
