@@ -1,7 +1,6 @@
 # Classifying US Kickstarter Projects
 
-Download the datasets:
-
+To download the data:
 ````
 install.packages("readr");
 library(readr);
