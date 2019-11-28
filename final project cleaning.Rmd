@@ -37,9 +37,8 @@ install.packages("fastDummies")
 library(fastDummies)
 projects <- fastDummies::dummy_cols(projects, select_columns = "main_category")
 
-#factor columns
+#factor main_category
 projects$main_category <- factor(projects$main_category)
-projects$country <- factor(projects$country)
 
 #drop unneeded columns and only use real usd goal and pledged
 #we replace state with our updated state2, and also make film&video the default category as it is the most common one
