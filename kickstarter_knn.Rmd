@@ -1,0 +1,61 @@
+---
+title: "Kickstarter Projects - kNN"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Classifying Kickstarter projects using k-nearest neighbors method
+Import and clean data
+```{r import and clean}
+#import mostly cleaned dataset
+df <- readRDS(gzcon(url("https://raw.githubusercontent.com/segevm/Classifying-Kickstarter-Projects/master/datasets/cleaned_data.rds")))
+#drop main_category because the variable is already factored
+df <- df[, -c(1)]
+#convert duration to numeric
+df$duration<-as.numeric(df$duration)
+str(df)
+```
+Split data into training and testing sets (75%-25% split)
+```{r split}
+index<-sample(1:nrow(df), .75*nrow(df), replace=F)
+train<-df[index,]
+test<-df[-index,]
+```
+Fit kNN model, first with k=3
+```{r knn}
+#load FNN library
+library(FNN)
+#fit model
+m<-knn(train, test, train$state, k=3)
+```
+Confusion matrix
+```{r confusion matrix}
+#confusion matrix
+tb<-table(actual=test$state, predicted=m)
+tb
+```
+Explore other values for k
+```{r errors}
+overallerror<-data.frame(k=seq(1,10,1), error=rep(0,10))
+for(i in 1:10){
+  m<-knn(train, test, train$state, k=i)
+  tb<-table(test$state, m)
+  overallerror[i,2]<-(tb[1,2]+tb[2,1])/sum(tb)
+}
+overallerror
+```
+```{r plot}
+plot(overallerror)
+lines(overallerror)
+```
+
+It appears that 3 is a good value for k.
+```{r accuracy}
+#compute accuracy for model with k=3
+accuracy <- function(x){
+  sum(diag(x)/(sum(rowSums(x))))
+}
+accuracy(tb)
+```
