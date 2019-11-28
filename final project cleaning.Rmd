@@ -12,12 +12,11 @@ projects <- read.csv("C:/Users/efarka/Downloads/kickstarter-projects/ks-projects
 projects$launched <- strptime(projects$launched, "%Y-%m-%d %H:%M:%S")
 projects$launched <- format(projects$launched, "%Y-%m-%d")
 projects$deadline <- strptime(projects$deadline, "%Y-%m-%d")
+
 #make duration column
 projects$duration = difftime(projects$deadline, projects$launched, units="days")
 #difftime has weird rounding errors, this smooths them out
 projects$duration <- round(projects$duration)
-
-
 
 #only care about these four states
 projects$state2[projects$state=="successful"] <- 1
@@ -36,6 +35,9 @@ install.packages("fastDummies")
 library(fastDummies)
 projects <- fastDummies::dummy_cols(projects, select_columns = "main_category")
 
+#factor columns
+projects$main_category <- factor(projects$main_category)
+projects$country <- factor(projects$country)
 
 #drop unneeded columns and only use real usd goal and pledged
 #we replace state with our updated state2, and also make film&video the default category as it is the most common one
