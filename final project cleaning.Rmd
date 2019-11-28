@@ -29,8 +29,8 @@ projects$state2[projects$state=="suspended"] <- 0
 #drop the other states
 projects <- na.omit(projects)
 
-#make is_us column
-projects$is_us <- ifelse(projects$country =="US", 1, 0)
+#only select the US observations
+projects <- projects[which(projects$country=="US"),]
 
 #make dummy vars for category
 install.packages("fastDummies")
@@ -43,7 +43,7 @@ projects$country <- factor(projects$country)
 
 #drop unneeded columns and only use real usd goal and pledged
 #we replace state with our updated state2, and also make film&video the default category as it is the most common one
-drops <- c("ID", "name", "goal", "pledged", "usd.pledged", "category","deadline", "launched", "state", "currency", "main_category_Film & Video")
+drops <- c("ID", "name", "goal", "pledged", "country", "usd.pledged", "category","deadline", "launched", "state", "currency", "main_category_Film & Video")
 projects <- projects[, !names(projects) %in% drops]
 
 #rename cols
