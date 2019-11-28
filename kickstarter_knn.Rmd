@@ -1,7 +1,5 @@
 ---
 title: "Kickstarter Projects - kNN"
-author: "Emily Gee"
-date: "11/27/2019"
 output: html_document
 ---
 
@@ -10,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 # Classifying Kickstarter projects using k-nearest neighbors method
 Import and clean data
-```{r import and clea}
+```{r import and clean}
 #import mostly cleaned dataset
 df <- readRDS(gzcon(url("https://raw.githubusercontent.com/segevm/Classifying-Kickstarter-Projects/master/datasets/cleaned_data.rds")))
 #drop main_category because the variable is already factored
