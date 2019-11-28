@@ -7,6 +7,8 @@ output: html_notebook
 ```{r}
 projects <- read.csv("C:/Users/efarka/Downloads/kickstarter-projects/ks-projects-201801.csv")
 
+#convert to dataframe
+projects <- data.frame(projects)
 
 #to time series
 projects$launched <- strptime(projects$launched, "%Y-%m-%d %H:%M:%S")
@@ -25,7 +27,7 @@ projects$state2[projects$state=="canceled"] <- 0
 projects$state2[projects$state=="suspended"] <- 0
 
 #drop the other states
-na.omit(projects)
+projects <- na.omit(projects)
 
 #make is_us column
 projects$is_us <- ifelse(projects$country =="US", 1, 0)
