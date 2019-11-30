@@ -19,6 +19,7 @@ str(df)
 ```
 Split data into training and testing sets (75%-25% split)
 ```{r split}
+set.seed(123)
 index<-sample(1:nrow(df), .75*nrow(df), replace=F)
 train<-df[index,]
 test<-df[-index,]
