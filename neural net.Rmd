@@ -1,0 +1,97 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+projects <- read.csv("C:/Users/efarka/Downloads/kickstarter-projects/ks-projects-201801.csv")
+
+#convert to dataframe
+projects <- data.frame(projects)
+
+#to time series
+projects$launched <- strptime(projects$launched, "%Y-%m-%d %H:%M:%S")
+projects$launched <- format(projects$launched, "%Y-%m-%d")
+projects$deadline <- strptime(projects$deadline, "%Y-%m-%d")
+
+#make duration column
+projects$duration = difftime(projects$deadline, projects$launched, units="days")
+#difftime has weird rounding errors, this smooths them out
+projects$duration <- round(projects$duration)
+
+#only care about these four states
+projects$state2[projects$state=="successful"] <- 1
+projects$state2[projects$state=="failed"] <- 0
+projects$state2[projects$state=="canceled"] <- 0
+projects$state2[projects$state=="suspended"] <- 0
+
+#drop the other states
+projects <- na.omit(projects)
+
+#only select the US observations
+projects <- projects[which(projects$country=="US"),]
+
+#make dummy vars for category
+install.packages("fastDummies")
+library(fastDummies)
+projects <- fastDummies::dummy_cols(projects, select_columns = "main_category")
+
+#factor main_category
+projects$main_category <- factor(projects$main_category)
+
+#drop unneeded columns and only use real usd goal and pledged
+#we replace state with our updated state2, and also make film&video the default category as it is the most common one
+drops <- c("ID", "name", "goal", "pledged", "country", "usd.pledged", "category","deadline", "launched", "state", "currency", "main_category_Film & Video")
+projects <- projects[, !names(projects) %in% drops]
+
+#rename cols
+colnames(projects)[colnames(projects)=="usd_pledged_real"] <- "pledged"
+colnames(projects)[colnames(projects)=="usd_goal_real"] <- "goal"
+colnames(projects)[colnames(projects)=="state2"] <- "state"
+
+projectscpy<-projects
+
+```
+
+
+```{r}
+set.seed(123)
+projects <- projects[, !names(projects) == "main_category"]
+projects$duration = as.numeric(projects$duration)
+df=projects
+spec = c(train = .25, test = .25, validate = .5)
+
+g = sample(cut(
+  seq(nrow(df)), 
+  nrow(df)*cumsum(c(0,spec)),
+  labels = names(spec)
+))
+
+res = split(df, g)
+train <- res$train
+validate <- res$validate
+test <- res$test
+#reduce size of training data
+train <-train[sample(nrow(train), 1000), ]
+
+str(test)
+```
+
+```{r}
+
+library(neuralnet)
+f=state~ backers +pledged + goal + duration + main_category_Art + main_category_Comics + main_category_Crafts + main_category_Dance + main_category_Design + main_category_Fashion + main_category_Food + main_category_Games + main_category_Journalism + main_category_Music + main_category_Photography + main_category_Publishing + main_category_Technology + main_category_Theater
+nn<-neuralnet(f, data=train, linear.output=F, hidden=3)
+pred<-compute(nn,validate)
+plot(nn, rep="best")
+predict<-ifelse(pred$net.result[,1]>.5, 1,  0)
+t<-table(actual=validate$`state`, predicted=predict)
+t
+errornn<-1-sum(diag(t))/sum(t)
+```
+
+
+
+
+
