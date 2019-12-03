@@ -1,0 +1,45 @@
+---
+title: "Kickstarter - Logistic Regression"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Classifying using logistic regression
+
+Import the data
+```{r}
+cleaned_data <- readRDS(gzcon(url("https://raw.githubusercontent.com/segevm/Classifying-US-Kickstarter-Projects/master/datasets/cleaned_data.rds")))
+
+```
+Partition into validation and training
+```{r}
+set.seed(123)
+index<-sample(1:nrow(cleaned_data), .25*nrow(cleaned_data), replace=F)
+validdata=cleaned_data[index,]
+traindata=cleaned_data[-index,]
+```
+Fit logistic regression model to training data
+```{r}
+m=glm(state~backers+pledged+goal+duration+main_category_Art+main_category_Comics+main_category_Crafts+main_category_Dance+main_category_Design+main_category_Fashion+main_category_Food+main_category_Games+main_category_Journalism+main_category_Music+main_category_Photography+main_category_Publishing+main_category_Technology+main_category_Theater, data=traindata, family = binomial())
+summary(m)
+```
+Create confusion matrix using validation data
+```{r}
+phats=predict(m, validdata, type = "response")
+predict=ifelse(phats>=0.5, "1", "0")
+table(actual=validdata$state, predicted=predict)
+```
+Create ROC Curve
+```{r}
+install.packages("ROCR")
+pred<-prediction(phats,validdata$state)
+perf <- performance(pred, measure = "tpr", x.measure = "fpr")
+plot(perf, col=rainbow(10))
+abline(0,1)
+auc=performance(pred, "auc")
+auc@y.values
+```
+
