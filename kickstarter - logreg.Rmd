@@ -14,11 +14,11 @@ Import the data
 cleaned_data <- readRDS(gzcon(url("https://raw.githubusercontent.com/segevm/Classifying-US-Kickstarter-Projects/master/datasets/cleaned_data.rds")))
 
 ```
-Partition into validation and training
+Partition into training and test data
 ```{r}
 set.seed(123)
 index<-sample(1:nrow(cleaned_data), .25*nrow(cleaned_data), replace=F)
-validdata=cleaned_data[index,]
+testdata=cleaned_data[index,]
 traindata=cleaned_data[-index,]
 ```
 Fit logistic regression model to training data
@@ -28,14 +28,14 @@ summary(m)
 ```
 Create confusion matrix using validation data
 ```{r}
-phats=predict(m, validdata, type = "response")
+phats=predict(m, testdata, type = "response")
 predict=ifelse(phats>=0.5, "1", "0")
-table(actual=validdata$state, predicted=predict)
+table(actual=testdata$state, predicted=predict)
 ```
 Create ROC Curve
 ```{r}
 install.packages("ROCR")
-pred<-prediction(phats,validdata$state)
+pred<-prediction(phats,traindata$state)
 perf <- performance(pred, measure = "tpr", x.measure = "fpr")
 plot(perf, col=rainbow(10))
 abline(0,1)
