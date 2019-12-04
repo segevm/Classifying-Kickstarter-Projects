@@ -1,5 +1,7 @@
 # Classifying US Kickstarter Projects
 
+Project goal: To predict whether or not a Kickstarter project will be successful, and to determine which variables are most significant in determining a project’s success
+
 To download the data:
 ````
 # Raw dataset
@@ -12,3 +14,9 @@ cleaned_data <- readRDS(gzcon(url("https://raw.githubusercontent.com/segevm/Clas
 
 ````
 
+Methods used:
+
+* Logistic regression
+* Neural networks
+* K-nearest neighbors
+* K-means clustering
