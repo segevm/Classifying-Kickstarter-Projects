@@ -26,3 +26,11 @@ Variable importance plot
 varImpPlot(rf,type = 1)
 ```
 
+Confusion Matrix
+```{r}
+rf_pred=predict(rf, validdata)
+t=table(actual=validdata$state, predicted=rf_pred)
+t
+accuracy=sum(diag(t))/sum(t)
+accuracy
+```
