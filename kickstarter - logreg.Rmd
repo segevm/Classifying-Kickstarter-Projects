@@ -26,7 +26,7 @@ Fit logistic regression model to training data
 m=glm(state~backers+pledged+goal+duration+main_category_Art+main_category_Comics+main_category_Crafts+main_category_Dance+main_category_Design+main_category_Fashion+main_category_Food+main_category_Games+main_category_Journalism+main_category_Music+main_category_Photography+main_category_Publishing+main_category_Technology+main_category_Theater, data=traindata, family = binomial())
 summary(m)
 ```
-Create confusion matrix using validation data
+Create confusion matrix using test data
 ```{r}
 phats=predict(m, testdata, type = "response")
 predict=ifelse(phats>=0.5, "1", "0")
@@ -35,7 +35,7 @@ table(actual=testdata$state, predicted=predict)
 Create ROC Curve
 ```{r}
 install.packages("ROCR")
-pred<-prediction(phats,traindata$state)
+pred<-prediction(phats,testdata$state)
 perf <- performance(pred, measure = "tpr", x.measure = "fpr")
 plot(perf, col=rainbow(10))
 abline(0,1)
