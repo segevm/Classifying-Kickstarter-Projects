@@ -1,0 +1,28 @@
+---
+title: "kickstarter - rf"
+author: "Patrick"
+date: "December 4, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Change response to factor
+```{r}
+traindata$state=as.factor(traindata$state)
+```
+
+Fit model
+```{r}
+rf=randomForest(state~backers+pledged+goal+duration+main_category_Art+main_category_Comics+main_category_Crafts+main_category_Dance+main_category_Design+main_category_Fashion+main_category_Food+main_category_Games+main_category_Journalism+main_category_Music+main_category_Photography+main_category_Publishing+main_category_Technology+main_category_Theater, data=traindata, ntree=100, mtry=4, nodesize=20, importance=TRUE)
+```
+
+Variable importance plot
+```{r}
+varImpPlot(rf,type = 1)
+```
+
