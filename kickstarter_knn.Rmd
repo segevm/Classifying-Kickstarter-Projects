@@ -6,7 +6,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-# Classifying Kickstarter projects using k-nearest neighbors method
+
+### Classifying Kickstarter projects using k-nearest neighbors method
 Import and clean data
 ```{r import and clean}
 #import mostly cleaned dataset
@@ -24,21 +25,12 @@ index<-sample(1:nrow(df), .75*nrow(df), replace=F)
 train<-df[index,]
 test<-df[-index,]
 ```
-Fit kNN model, first with k=3
+
+Fit kNN models with k = 1-10 to compare error rates and find best value for k
 ```{r knn}
 #load FNN library
 library(FNN)
-#fit model
-m<-knn(train, test, train$state, k=3)
-```
-Confusion matrix
-```{r confusion matrix}
-#confusion matrix
-tb<-table(actual=test$state, predicted=m)
-tb
-```
-Explore other values for k
-```{r errors}
+#compute errors
 overallerror<-data.frame(k=seq(1,10,1), error=rep(0,10))
 for(i in 1:10){
   m<-knn(train, test, train$state, k=i)
@@ -47,15 +39,29 @@ for(i in 1:10){
 }
 overallerror
 ```
+
+Plot
 ```{r plot}
 plot(overallerror)
 lines(overallerror)
 ```
 
 It appears that 3 is a good value for k.
+``` {r k=3}
+#fit model
+m<-knn(train, test, train$state, k=3)
+```
+
+Confusion matrix
+```{r confusion matrix}
+#confusion matrix
+tb<-table(actual=test$state, predicted=m)
+tb
+```
+Performance measures
 ```{r accuracy}
-#compute accuracy for model with k=3
-accuracy <- function(x){
+#compute accuracy
+accuracy<-function(x){
   sum(diag(x)/(sum(rowSums(x))))
 }
 accuracy(tb)
