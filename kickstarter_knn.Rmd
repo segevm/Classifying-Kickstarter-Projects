@@ -66,3 +66,14 @@ accuracy<-function(x){
 }
 accuracy(tb)
 ```
+ROC curves
+```{r}
+library(ROCR)
+m<-as.numeric(m)
+pred<-prediction(m, test$state)
+perf<-performance(pred, measure="tpr", x.measure="fpr")
+plot(perf)
+library(pROC)
+plot.roc(test$state, m)
+```
+
