@@ -72,8 +72,14 @@ library(ROCR)
 m<-as.numeric(m)
 pred<-prediction(m, test$state)
 perf<-performance(pred, measure="tpr", x.measure="fpr")
-plot(perf)
+plot(perf, col=rainbow(10))
+abline(0,1)
 library(pROC)
-plot.roc(test$state, m)
+plot.roc(test$state, m, col=rainbow(10))
+```
+AUC
+```{r}
+auc<-performance(pred, "auc")
+auc@y.values
 ```
 
