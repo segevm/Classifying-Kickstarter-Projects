@@ -35,7 +35,7 @@ table(actual=testdata$state, predicted=predict)
 Create ROC Curve
 ```{r}
 install.packages("ROCR")
-pred<-prediction(phats,traindata$state)
+pred<-prediction(phats,testdata$state)
 perf <- performance(pred, measure = "tpr", x.measure = "fpr")
 plot(perf, col=rainbow(10))
 abline(0,1)
