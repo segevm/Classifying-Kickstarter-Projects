@@ -18,7 +18,7 @@ traindata$state=as.factor(traindata$state)
 
 Fit model
 ```{r}
-rf=randomForest(state~backers+pledged+goal+duration+main_category_Art+main_category_Comics+main_category_Crafts+main_category_Dance+main_category_Design+main_category_Fashion+main_category_Food+main_category_Games+main_category_Journalism+main_category_Music+main_category_Photography+main_category_Publishing+main_category_Technology+main_category_Theater, data=traindata, ntree=100, mtry=2, nodesize=20, importance=TRUE)
+rf=randomForest(state~backers+pledged+goal+duration+main_category_Art+main_category_Comics+main_category_Crafts+main_category_Dance+main_category_Design+main_category_Fashion+main_category_Food+main_category_Games+main_category_Journalism+main_category_Music+main_category_Photography+main_category_Publishing+main_category_Technology+main_category_Theater, data=traindata, ntree=200, mtry=4, nodesize=25, importance=TRUE)
 ```
 
 Variable importance plot
