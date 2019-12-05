@@ -19,4 +19,5 @@ Methods used:
 * Logistic regression
 * Neural networks
 * K-nearest neighbors
+* Random forest
 * K-means clustering
