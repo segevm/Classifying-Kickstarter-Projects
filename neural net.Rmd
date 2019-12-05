@@ -60,20 +60,12 @@ set.seed(123)
 projects <- projects[, !names(projects) == "main_category"]
 projects$duration = as.numeric(projects$duration)
 df=projects
-spec = c(train = .25, test = .25, validate = .5)
-
-g = sample(cut(
-  seq(nrow(df)), 
-  nrow(df)*cumsum(c(0,spec)),
-  labels = names(spec)
-))
-
-res = split(df, g)
-train <- res$train
-validate <- res$validate
-test <- res$test
+set.seed(123)
+index<-sample(1:nrow(df), .75*nrow(df), replace=F)
+train<-df[index,]
+test<-df[-index,]
 #reduce size of training data
-train <-train[sample(nrow(train), 1000), ]
+train <-train[sample(nrow(train), 10000), ]
 
 str(test)
 ```
@@ -86,11 +78,28 @@ nn<-neuralnet(f, data=train, linear.output=F, hidden=3)
 pred<-compute(nn,validate)
 plot(nn, rep="best")
 predict<-ifelse(pred$net.result[,1]>.5, 1,  0)
-t<-table(actual=validate$`state`, predicted=predict)
-t
-errornn<-1-sum(diag(t))/sum(t)
 ```
 
+```{r}
+
+t<-table(actual=validate$`state`, predicted=predict)
+t
+
+sprintf("Performance measure on test data:")
+errornn<-1-sum(diag(t))/sum(t)
+sprintf("Accuracy: %%%f", (1-errornn)*100)
+spec = t[1,1]/(t[1,1]+t[1,2])
+sprintf("Specificity: %%%f", spec*100)
+fpos= t[1,2]/sum(t)
+sprintf("False positive rate %%f", fpos*100)
+
+
+```
+
+```{r}
+library(pROC)
+plot.roc(validate$state, predict)
+```
 
 
 
